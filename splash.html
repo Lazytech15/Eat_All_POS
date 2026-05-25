@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      width: 100vw;
+      height: 100vh;
+      background: #0f0f14;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
+      overflow: hidden;
+      user-select: none;
+    }
+
+    .logo-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      animation: fadeIn 0.6s ease forwards;
+    }
+
+    .logo-wrap img {
+      width: 180px;
+      height: 180px;
+      border-radius: 20px;
+      object-fit: cover;
+    }
+
+    .loader-bar {
+      margin-top: 24px;
+      width: 200px;
+      height: 3px;
+      background: #1e1e2e;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .loader-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #f59e0b, #ef4444);
+      border-radius: 999px;
+      animation: load 1.8s ease forwards;
+    }
+
+    .loading-text {
+      margin-top: 8px;
+      font-size: 11px;
+      color: #4b4b6b;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      font-family: monospace;
+      animation: blink 1.2s infinite;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes load {
+      0%   { width: 0%; }
+      40%  { width: 60%; }
+      70%  { width: 80%; }
+      100% { width: 100%; }
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.3; }
+    }
+  </style>
+</head>
+<body>
+  <div class="logo-wrap">
+    <img src="./src/assets/Eatall.png" alt="Eat-All POS" />
+    <div class="loader-bar">
+      <div class="loader-fill"></div>
+    </div>
+    <div class="loading-text">Loading...</div>
+  </div>
+</body>
+</html>

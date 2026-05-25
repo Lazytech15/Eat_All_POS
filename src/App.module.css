@@ -1,0 +1,19 @@
+.app {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--bg-base);
+}
+
+.main {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.page {
+  flex: 1;
+  overflow: hidden;
+  animation: fadeIn 0.2s ease;
+}
