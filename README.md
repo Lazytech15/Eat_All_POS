@@ -1,111 +1,130 @@
-# NeuralDesk POS
+# 🍔 Eat-All POS
 
-An offline-capable Point of Sale system built with **Electron** (backend) and **React + Vite** (frontend), with **SQLite** for local data persistence.
+A fast, offline-capable Point-of-Sale desktop application built for food businesses.
+Built with Electron + React + SQLite — no internet required.
 
-## Features
+---
 
-- 🛒 **POS Interface** — Fast product browsing, cart management, discounts, notes
-- 💳 **Multiple Payment Methods** — Cash (with change calculation), Card, GCash, Maya
-- 📋 **Order History** — Full transaction log with line-item details
-- 📦 **Product Management** — Add/edit/delete products, emoji icons, stock tracking
-- 📊 **Dashboard** — Daily KPIs, weekly sales chart, top products, recent orders
-- ⚙️ **Settings** — Store name, currency, VAT rate, receipt footer
-- 🔌 **Fully Offline** — SQLite local database, works without internet
-- 🖥️ **Cross-platform** — Windows, macOS, Linux
+## 📸 Screenshots
 
-## Tech Stack
+### Loading Animation
+<img width="485" height="322" alt="Splash Screen" src="https://github.com/user-attachments/assets/1506f3b4-dc1b-4691-8ba4-0968d11269ab" />
+
+### Main Dashboard
+<img width="1387" height="893" alt="Main Dashboard" src="https://github.com/user-attachments/assets/74c68c25-4473-480e-91f5-5096d5d4b742" />
+
+---
+
+## ✨ Features
+
+- **Offline-First** — All data stored locally via SQLite. Works without internet.
+- **Fast Cashier Interface** — Search products, manage cart, apply discounts, and charge customers in seconds.
+- **VAT & Discount Handling** — Automatic 12% VAT computation with optional per-order discounts.
+- **Multiple Payment Methods** — Cash, card, and more with automatic change calculation.
+- **Inventory Management** — Add, edit, delete products and categories. Stock auto-deducts on every order.
+- **Low Stock Alerts** — Dashboard flags products with 5 or fewer units remaining.
+- **Sales Dashboard** — Daily revenue, items sold, weekly sales chart, and top 5 products (last 30 days).
+- **Order History** — Browse past transactions with full item breakdowns.
+- **Animated Splash Screen** — Branded loading screen on launch.
+- **Frameless Window** — Clean UI with no native menu bar or devtools in production.
+
+---
+
+## 🛠 Tech Stack
 
 | Layer | Technology |
 |---|---|
-| Desktop Shell | Electron 29 |
-| Frontend | React 18 + Vite 5 |
-| State | Zustand |
-| Database | SQLite via better-sqlite3 |
-| IPC | Electron contextBridge |
+| Desktop shell | Electron |
+| Frontend | React + Vite |
 | Styling | CSS Modules |
+| State management | Zustand |
+| Database | SQLite via better-sqlite3 |
+| IPC | Electron ipcMain / ipcRenderer |
+| Runtime | Node.js |
 
-## Getting Started
+---
+
+## 📁 Project Structure
+
+```
+eat-all-pos/
+├── electron/
+│   ├── main.js             # Electron main process, DB setup, IPC handlers
+│   └── preload.js          # Context bridge for renderer
+├── src/
+│   ├── assets/
+│   │   └── Eatall.png      # App logo
+│   ├── components/
+│   │   ├── Sidebar.jsx
+│   │   ├── Sidebar.module.css
+│   │   └── ...
+│   ├── pages/
+│   │   ├── POS.jsx
+│   │   ├── Orders.jsx
+│   │   ├── Products.jsx
+│   │   ├── Dashboard.jsx
+│   │   └── Settings.jsx
+│   ├── store/              # Zustand store
+│   └── main.jsx
+├── splash.html             # Splash screen (root level)
+├── pos.db                  # Auto-generated SQLite database (dev)
+├── package.json
+└── vite.config.js
+```
+
+## 🚀 Getting Started
 
 ### Prerequisites
+
 - Node.js 18+
 - npm or yarn
 
 ### Install
 
 ```bash
-cd neuraldesk-pos
+git clone https://github.com/your-username/eat-all-pos.git
+cd eat-all-pos
 npm install
 ```
 
-### Development
+### Run in Development
 
 ```bash
 npm run dev
 ```
 
-This starts Vite dev server on `http://localhost:5173` and launches Electron pointing to it.
+This starts the Vite dev server and launches Electron pointing to `localhost:5173`.
 
-### Production Build
+### Build for Production
 
 ```bash
 npm run build
 ```
 
-Outputs to `dist-electron/`.
+---
 
-## Project Structure
+## 🗄 Database
 
-```
-neuraldesk-pos/
-├── electron/
-│   ├── main.js        # Main process: SQLite, IPC handlers, window
-│   └── preload.js     # Secure IPC bridge to renderer
-├── src/
-│   ├── pages/
-│   │   ├── POS.jsx          # Cashier view
-│   │   ├── Orders.jsx       # Transaction history
-│   │   ├── Products.jsx     # Inventory management
-│   │   ├── Dashboard.jsx    # Analytics
-│   │   └── Settings.jsx     # Store configuration
-│   ├── components/
-│   │   ├── Sidebar.jsx      # Navigation
-│   │   ├── PaymentModal.jsx # Payment flow
-│   │   └── Notification.jsx # Toast alerts
-│   ├── store/
-│   │   └── index.js         # Zustand stores
-│   ├── utils/
-│   │   └── index.js         # Helpers + mock API
-│   └── styles/
-│       └── globals.css      # Design tokens
-├── pos.db             # SQLite database (auto-created on first run)
-└── package.json
-```
+The SQLite database (`pos.db`) is auto-created on first launch and seeded with:
 
-## Database Schema
+- **5 default categories** — Food, Drinks, Snacks, Electronics, Others
+- **12 sample products** with prices, stock levels, and emoji icons
+- **Default settings** — store name, currency (PHP ₱), 12% tax rate
 
-- **products** — id, name, price, category, stock, barcode, image_emoji
-- **orders** — id, order_number, total, subtotal, tax, discount, payment_method, ...
-- **order_items** — id, order_id, product_id, product_name, quantity, unit_price, total
-- **categories** — id, name, color
-- **settings** — key, value
+In production, the database is stored in the OS user data directory:
 
-## IPC API (Renderer ↔ Main)
+| OS | Path |
+|---|---|
+| Windows | `%APPDATA%\eat-all-pos\pos.db` |
+| macOS | `~/Library/Application Support/eat-all-pos/pos.db` |
+| Linux | `~/.config/eat-all-pos/pos.db` |
 
-```js
-// Products
-window.api.products.getAll()
-window.api.products.create(product)
-window.api.products.update(id, updates)
-window.api.products.delete(id)
+---
 
-// Orders
-window.api.orders.create(orderData)
-window.api.orders.getAll(limit)
+## 📄 License
 
-// Settings
-window.api.settings.get()
-window.api.settings.set(key, value)
+MIT — feel free to use, modify, and distribute.
 
-// Stats
-window.api.stats.getDashboard()
-```
+---
+
+> Built with ☕ and 🍔 by a solo engineer.
