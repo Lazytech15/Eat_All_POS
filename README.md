@@ -45,13 +45,15 @@ Built with Electron + React + SQLite — no internet required.
 ---
 
 ## 📁 Project Structure
+
+```
 eat-all-pos/
 ├── electron/
-│   ├── main.js          # Electron main process, DB setup, IPC handlers
-│   └── preload.js       # Context bridge for renderer
+│   ├── main.js             # Electron main process, DB setup, IPC handlers
+│   └── preload.js          # Context bridge for renderer
 ├── src/
 │   ├── assets/
-│   │   └── Eatall.png   # App logo
+│   │   └── Eatall.png      # App logo
 │   ├── components/
 │   │   ├── Sidebar.jsx
 │   │   ├── Sidebar.module.css
@@ -62,14 +64,13 @@ eat-all-pos/
 │   │   ├── Products.jsx
 │   │   ├── Dashboard.jsx
 │   │   └── Settings.jsx
-│   ├── store/           # Zustand store
+│   ├── store/              # Zustand store
 │   └── main.jsx
-├── splash.html          # Splash screen (root level)
-├── pos.db               # Auto-generated SQLite database (dev)
+├── splash.html             # Splash screen (root level)
+├── pos.db                  # Auto-generated SQLite database (dev)
 ├── package.json
 └── vite.config.js
-
----
+```
 
 ## 🚀 Getting Started
 
