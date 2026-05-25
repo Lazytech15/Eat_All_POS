@@ -3,13 +3,15 @@
 A fast, offline-capable Point-of-Sale desktop application built for food businesses.
 Built with Electron + React + SQLite — no internet required.
 
-## Screenshot
-Loading Animation
-<img width="485" height="322" alt="Screenshot 2026-05-25 125307" src="https://github.com/user-attachments/assets/1506f3b4-dc1b-4691-8ba4-0968d11269ab" />
+---
 
-Main Dashboard
-<img width="1387" height="893" alt="Screenshot 2026-05-25 125238" src="https://github.com/user-attachments/assets/74c68c25-4473-480e-91f5-5096d5d4b742" />
+## 📸 Screenshots
 
+### Loading Animation
+<img width="485" height="322" alt="Splash Screen" src="https://github.com/user-attachments/assets/1506f3b4-dc1b-4691-8ba4-0968d11269ab" />
+
+### Main Dashboard
+<img width="1387" height="893" alt="Main Dashboard" src="https://github.com/user-attachments/assets/74c68c25-4473-480e-91f5-5096d5d4b742" />
 
 ---
 
@@ -47,10 +49,9 @@ eat-all-pos/
 ├── electron/
 │   ├── main.js          # Electron main process, DB setup, IPC handlers
 │   └── preload.js       # Context bridge for renderer
-├── public/
-│   ├── Eatall.png       # App logo
-│   └── splash.html      # Splash screen
 ├── src/
+│   ├── assets/
+│   │   └── Eatall.png   # App logo
 │   ├── components/
 │   │   ├── Sidebar.jsx
 │   │   ├── Sidebar.module.css
@@ -63,6 +64,7 @@ eat-all-pos/
 │   │   └── Settings.jsx
 │   ├── store/           # Zustand store
 │   └── main.jsx
+├── splash.html          # Splash screen (root level)
 ├── pos.db               # Auto-generated SQLite database (dev)
 ├── package.json
 └── vite.config.js
@@ -96,7 +98,6 @@ This starts the Vite dev server and launches Electron pointing to `localhost:517
 
 ```bash
 npm run build
-npm run electron:build
 ```
 
 ---
