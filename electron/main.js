@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, Menu, Tray, nativeImage } = require('electron')
+const { app, BrowserWindow, ipcMain, Menu } = require('electron')
 const path = require('path')
 const Database = require('better-sqlite3')
 const { v4: uuidv4 } = require('uuid')
@@ -6,7 +6,6 @@ const { v4: uuidv4 } = require('uuid')
 const isDev = process.env.NODE_ENV === 'development' || !app.isPackaged
 
 let mainWindow
-let tray
 let db
 
 // ─── Database Setup ──────────────────────────────────────────────────────────
@@ -111,7 +110,7 @@ function initDatabase() {
   const settingsCount = db.prepare('SELECT COUNT(*) as c FROM settings').get()
   if (settingsCount.c === 0) {
     const settings = [
-      ['store_name', 'NeuralDesk Store'],
+      ['store_name', 'EatAll POS'],
       ['currency', 'PHP'],
       ['currency_symbol', '₱'],
       ['tax_rate', '12'],
@@ -229,8 +228,6 @@ function registerIpcHandlers() {
 
   // Dashboard stats
   ipcMain.handle('stats:getDashboard', () => {
-    const today = new Date().toISOString().split('T')[0]
-
     const todaySales = db.prepare(
       `SELECT COUNT(*) as count, COALESCE(SUM(total), 0) as revenue
        FROM orders WHERE date(created_at) = date('now')`
@@ -278,7 +275,27 @@ function registerIpcHandlers() {
   })
 }
 
-// ─── Window ──────────────────────────────────────────────────────────────────
+// ─── Splash Screen ───────────────────────────────────────────────────────────
+
+function createSplash() {
+  const splash = new BrowserWindow({
+    width: 480,
+    height: 320,
+    frame: false,
+    transparent: true,
+    resizable: false,
+    center: true,
+    alwaysOnTop: true,
+    skipTaskbar: true,
+    icon: path.join(__dirname, '..', 'src', 'assets', 'Eatall.png'),
+    webPreferences: { nodeIntegration: false },
+  })
+
+  splash.loadFile(path.join(__dirname, '..', 'splash.html'))
+  return splash
+}
+
+// ─── Main Window ─────────────────────────────────────────────────────────────
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -287,19 +304,19 @@ function createWindow() {
     minWidth: 1100,
     minHeight: 700,
     titleBarStyle: 'hiddenInset',
-    autoHideMenuBar: true,   // ← ADD THIS
+    autoHideMenuBar: true,
     backgroundColor: '#0f0f14',
+    show: false,
+    icon: path.join(__dirname, '..', 'src', 'assets', 'Eatall.png'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
       nodeIntegration: false,
     },
-    icon: path.join(__dirname, '..', 'public', 'icon.png'),
   })
 
   if (isDev) {
     mainWindow.loadURL('http://localhost:5173')
-    // mainWindow.webContents.openDevTools()  ← REMOVE or comment this out
   } else {
     mainWindow.loadFile(path.join(__dirname, '..', 'dist', 'index.html'))
   }
@@ -310,10 +327,19 @@ function createWindow() {
 // ─── App Events ──────────────────────────────────────────────────────────────
 
 app.whenReady().then(() => {
-  Menu.setApplicationMenu(null)   // ← ADD THIS to fully remove the menu bar
+  Menu.setApplicationMenu(null)
   initDatabase()
   registerIpcHandlers()
+
+  const splash = createSplash()
   createWindow()
+
+  mainWindow.webContents.once('did-finish-load', () => {
+    setTimeout(() => {
+      splash.close()
+      mainWindow.show()
+    }, 2000)
+  })
 })
 
 app.on('window-all-closed', () => {

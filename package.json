@@ -1,5 +1,5 @@
 {
-  "name": "neuraldesk-pos",
+  "name": "eatall-pos",
   "version": "1.0.0",
   "description": "Offline-capable POS System built with Electron + React Vite",
   "main": "electron/main.js",
@@ -32,24 +32,30 @@
     "wait-on": "^7.2.0"
   },
   "build": {
-    "appId": "com.neuraldesk.pos",
-    "productName": "NeuralDesk POS",
+    "appId": "com.eatall.pos",
+    "productName": "Eat-All POS",
     "directories": {
       "output": "dist-electron"
     },
     "files": [
       "dist/**/*",
       "electron/**/*",
+      "src/assets/**/*",
+      "splash.html",
       "node_modules/better-sqlite3/**/*"
     ],
+    "icon": "src/assets/Eatall.png",
     "mac": {
-      "category": "public.app-category.business"
+      "category": "public.app-category.business",
+      "icon": "src/assets/Eatall.png"
     },
     "win": {
-      "target": "nsis"
+      "target": "nsis",
+      "icon": "src/assets/Eatall.png"
     },
     "linux": {
-      "target": "AppImage"
+      "target": "AppImage",
+      "icon": "src/assets/Eatall.png"
     }
   }
 }
