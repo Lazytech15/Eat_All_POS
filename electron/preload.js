@@ -10,6 +10,7 @@ contextBridge.exposeInMainWorld('api', {
   // Products
   products: {
     getAll: () => ipcRenderer.invoke('products:getAll'),
+    getByBarcode: (barcode) => ipcRenderer.invoke('products:getByBarcode', barcode),
     create: (product) => ipcRenderer.invoke('products:create', product),
     update: (id, updates) => ipcRenderer.invoke('products:update', id, updates),
     delete: (id) => ipcRenderer.invoke('products:delete', id),
@@ -32,5 +33,10 @@ contextBridge.exposeInMainWorld('api', {
   // Stats
   stats: {
     getDashboard: () => ipcRenderer.invoke('stats:getDashboard'),
+  },
+
+  // Receipt
+  receipt: {
+    print: (receiptData) => ipcRenderer.invoke('receipt:print', receiptData),
   },
 })

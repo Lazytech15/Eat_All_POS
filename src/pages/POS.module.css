@@ -354,3 +354,28 @@
   font-size: 14px;
   opacity: 0.9;
 }
+
+/* Barcode scanner */
+.barcodeHint {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--text-muted, #6b7280);
+  padding: 4px 0 2px;
+  opacity: 0.7;
+}
+
+.barcodeToast {
+  background: var(--accent, #6366f1);
+  color: #fff;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 13px;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

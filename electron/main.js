@@ -73,11 +73,12 @@ function initDatabase() {
   const catCount = db.prepare('SELECT COUNT(*) as c FROM categories').get()
   if (catCount.c === 0) {
     const cats = [
-      { id: uuidv4(), name: 'Food', color: '#f59e0b' },
-      { id: uuidv4(), name: 'Drinks', color: '#3b82f6' },
-      { id: uuidv4(), name: 'Snacks', color: '#10b981' },
-      { id: uuidv4(), name: 'Electronics', color: '#8b5cf6' },
-      { id: uuidv4(), name: 'Others', color: '#6b7280' },
+      { id: uuidv4(), name: 'Burgers',    color: '#dc2626' },
+      { id: uuidv4(), name: 'Chicken',    color: '#d97706' },
+      { id: uuidv4(), name: 'Rice Meals', color: '#f59e0b' },
+      { id: uuidv4(), name: 'Sides',      color: '#10b981' },
+      { id: uuidv4(), name: 'Desserts',   color: '#ec4899' },
+      { id: uuidv4(), name: 'Drinks',     color: '#3b82f6' },
     ]
     const insertCat = db.prepare('INSERT INTO categories (id, name, color) VALUES (?, ?, ?)')
     cats.forEach(c => insertCat.run(c.id, c.name, c.color))
@@ -87,34 +88,58 @@ function initDatabase() {
   const prodCount = db.prepare('SELECT COUNT(*) as c FROM products').get()
   if (prodCount.c === 0) {
     const products = [
-      { id: uuidv4(), name: 'Burger Meal', price: 199, category: 'Food', stock: 50, image_emoji: '🍔' },
-      { id: uuidv4(), name: 'Pizza Slice', price: 89, category: 'Food', stock: 30, image_emoji: '🍕' },
-      { id: uuidv4(), name: 'Fried Chicken', price: 149, category: 'Food', stock: 40, image_emoji: '🍗' },
-      { id: uuidv4(), name: 'Rice Bowl', price: 75, category: 'Food', stock: 60, image_emoji: '🍚' },
-      { id: uuidv4(), name: 'Soda Can', price: 35, category: 'Drinks', stock: 100, image_emoji: '🥤' },
-      { id: uuidv4(), name: 'Bottled Water', price: 20, category: 'Drinks', stock: 200, image_emoji: '💧' },
-      { id: uuidv4(), name: 'Iced Coffee', price: 79, category: 'Drinks', stock: 45, image_emoji: '☕' },
-      { id: uuidv4(), name: 'Juice Box', price: 45, category: 'Drinks', stock: 80, image_emoji: '🧃' },
-      { id: uuidv4(), name: 'Potato Chips', price: 29, category: 'Snacks', stock: 120, image_emoji: '🥔' },
-      { id: uuidv4(), name: 'Chocolate Bar', price: 39, category: 'Snacks', stock: 90, image_emoji: '🍫' },
-      { id: uuidv4(), name: 'Gummy Bears', price: 25, category: 'Snacks', stock: 70, image_emoji: '🐻' },
-      { id: uuidv4(), name: 'USB Cable', price: 199, category: 'Electronics', stock: 25, image_emoji: '🔌' },
+      // Burgers
+      { name: 'Classic Burger',          price: 99,  category: 'Burgers',    stock: 100, image_emoji: '🍔', barcode: '8001001' },
+      { name: 'Cheeseburger',            price: 115, category: 'Burgers',    stock: 100, image_emoji: '🍔', barcode: '8001002' },
+      { name: 'Double Burger',           price: 149, category: 'Burgers',    stock: 100, image_emoji: '🍔', barcode: '8001003' },
+      { name: 'Spicy Burger',            price: 129, category: 'Burgers',    stock: 100, image_emoji: '🌶️', barcode: '8001004' },
+      // Chicken
+      { name: 'Fried Chicken (1 pc)',    price: 109, category: 'Chicken',    stock: 80,  image_emoji: '🍗', barcode: '8002001' },
+      { name: 'Fried Chicken (2 pcs)',   price: 199, category: 'Chicken',    stock: 80,  image_emoji: '🍗', barcode: '8002002' },
+      { name: 'Chicken Sandwich',        price: 119, category: 'Chicken',    stock: 80,  image_emoji: '🥪', barcode: '8002003' },
+      { name: 'Spicy Chicken',           price: 125, category: 'Chicken',    stock: 80,  image_emoji: '🌶️', barcode: '8002004' },
+      { name: 'Chicken Nuggets (6 pcs)', price: 89,  category: 'Chicken',    stock: 100, image_emoji: '🍗', barcode: '8002005' },
+      // Rice Meals
+      { name: 'Chickenjoy w/ Rice',      price: 145, category: 'Rice Meals', stock: 80,  image_emoji: '🍚', barcode: '8003001' },
+      { name: 'Burger Steak w/ Rice',    price: 129, category: 'Rice Meals', stock: 80,  image_emoji: '🍚', barcode: '8003002' },
+      { name: 'Spaghetti',               price: 99,  category: 'Rice Meals', stock: 60,  image_emoji: '🍝', barcode: '8003003' },
+      { name: 'Palabok',                 price: 109, category: 'Rice Meals', stock: 60,  image_emoji: '🍜', barcode: '8003004' },
+      { name: 'Burger Meal (w/ fries)',  price: 175, category: 'Rice Meals', stock: 100, image_emoji: '🍟', barcode: '8003005' },
+      // Sides
+      { name: 'French Fries (Regular)',  price: 55,  category: 'Sides',      stock: 120, image_emoji: '🍟', barcode: '8004001' },
+      { name: 'French Fries (Large)',    price: 75,  category: 'Sides',      stock: 120, image_emoji: '🍟', barcode: '8004002' },
+      { name: 'Mashed Potato',           price: 59,  category: 'Sides',      stock: 100, image_emoji: '🥔', barcode: '8004003' },
+      { name: 'Coleslaw',                price: 49,  category: 'Sides',      stock: 100, image_emoji: '🥗', barcode: '8004004' },
+      { name: 'Plain Rice',              price: 30,  category: 'Sides',      stock: 200, image_emoji: '🍚', barcode: '8004005' },
+      // Desserts
+      { name: 'Peach Mango Pie',         price: 55,  category: 'Desserts',   stock: 60,  image_emoji: '🥧', barcode: '8005001' },
+      { name: 'Chocolate Sundae',        price: 65,  category: 'Desserts',   stock: 60,  image_emoji: '🍦', barcode: '8005002' },
+      { name: 'Vanilla Soft Serve',      price: 49,  category: 'Desserts',   stock: 60,  image_emoji: '🍦', barcode: '8005003' },
+      { name: 'Halo-Halo',               price: 99,  category: 'Desserts',   stock: 50,  image_emoji: '🍨', barcode: '8005004' },
+      // Drinks
+      { name: 'Coke Regular',            price: 55,  category: 'Drinks',     stock: 150, image_emoji: '🥤', barcode: '8006001' },
+      { name: 'Coke Large',              price: 70,  category: 'Drinks',     stock: 150, image_emoji: '🥤', barcode: '8006002' },
+      { name: 'Royal/Sprite',            price: 55,  category: 'Drinks',     stock: 150, image_emoji: '🥤', barcode: '8006003' },
+      { name: 'Pineapple Juice',         price: 65,  category: 'Drinks',     stock: 100, image_emoji: '🍹', barcode: '8006004' },
+      { name: 'Bottled Water',           price: 35,  category: 'Drinks',     stock: 200, image_emoji: '💧', barcode: '8006005' },
+      { name: 'Iced Coffee',             price: 89,  category: 'Drinks',     stock: 80,  image_emoji: '☕', barcode: '8006006' },
+      { name: '4-Season Juice',          price: 59,  category: 'Drinks',     stock: 100, image_emoji: '🧃', barcode: '8006007' },
     ]
     const insertProd = db.prepare(
-      'INSERT INTO products (id, name, price, category, stock, image_emoji) VALUES (?, ?, ?, ?, ?, ?)'
+      'INSERT INTO products (id, name, price, category, stock, barcode, image_emoji) VALUES (?, ?, ?, ?, ?, ?, ?)'
     )
-    products.forEach(p => insertProd.run(p.id, p.name, p.price, p.category, p.stock, p.image_emoji))
+    products.forEach(p => insertProd.run(uuidv4(), p.name, p.price, p.category, p.stock, p.barcode || null, p.image_emoji))
   }
 
   // Seed settings
   const settingsCount = db.prepare('SELECT COUNT(*) as c FROM settings').get()
   if (settingsCount.c === 0) {
     const settings = [
-      ['store_name', 'EatAll POS'],
+      ['store_name', 'EatAll Fast Food'],
       ['currency', 'PHP'],
       ['currency_symbol', '₱'],
       ['tax_rate', '12'],
-      ['receipt_footer', 'Thank you for shopping with us!'],
+      ['receipt_footer', 'Thank you for dining with us! Come back again!'],
     ]
     const insertSetting = db.prepare('INSERT INTO settings (key, value) VALUES (?, ?)')
     settings.forEach(s => insertSetting.run(s[0], s[1]))
@@ -163,6 +188,10 @@ function registerIpcHandlers() {
   ipcMain.handle('products:updateStock', (_, id, delta) => {
     db.prepare('UPDATE products SET stock = stock + ? WHERE id = ?').run(delta, id)
     return db.prepare('SELECT stock FROM products WHERE id = ?').get(id)
+  })
+
+  ipcMain.handle('products:getByBarcode', (_, barcode) => {
+    return db.prepare('SELECT * FROM products WHERE barcode = ?').get(barcode) || null
   })
 
   // Categories
@@ -272,6 +301,175 @@ function registerIpcHandlers() {
       top_products: topProducts,
       recent_orders: recentOrders,
     }
+  })
+
+  // Print receipt
+  ipcMain.handle('receipt:print', (_, receiptData) => {
+    const { BrowserWindow: BW } = require('electron')
+    const fs = require('fs')
+    const os = require('os')
+
+    const settings = db.prepare('SELECT key, value FROM settings').all()
+    const cfg = Object.fromEntries(settings.map(r => [r.key, r.value]))
+    const storeName = cfg.store_name || 'EatAll Fast Food'
+    const footer = cfg.receipt_footer || 'Thank you!'
+    const symbol = cfg.currency_symbol || '₱'
+
+    const fmt = (n) => `${symbol}${Number(n || 0).toFixed(2)}`
+    const now = new Date()
+    const dateStr = now.toLocaleDateString('en-PH', { year: 'numeric', month: 'short', day: 'numeric' })
+    const timeStr = now.toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit' })
+
+    const itemRows = (receiptData.items || []).map(i =>
+      `<tr>
+        <td style="padding:3px 0">${i.product_name}</td>
+        <td style="text-align:center;padding:3px 6px">${i.quantity}</td>
+        <td style="text-align:right;padding:3px 0;white-space:nowrap">${fmt(i.total)}</td>
+      </tr>`
+    ).join('')
+
+    const html = `<!DOCTYPE html><html><head>
+      <meta charset="utf-8">
+      <style>
+        @page { size: 80mm auto; margin: 4mm; }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+          background: #f0f0f0;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          padding: 16px;
+          font-family: Arial, sans-serif;
+        }
+
+        /* Toolbar - hidden when printing */
+        .toolbar {
+          display: flex;
+          gap: 10px;
+          margin-bottom: 16px;
+          width: 320px;
+        }
+        .btn-print {
+          flex: 1;
+          background: #4f46e5;
+          color: #fff;
+          border: none;
+          border-radius: 8px;
+          padding: 10px 0;
+          font-size: 15px;
+          font-weight: bold;
+          cursor: pointer;
+          letter-spacing: 0.5px;
+        }
+        .btn-print:hover { background: #4338ca; }
+        .btn-close {
+          background: #6b7280;
+          color: #fff;
+          border: none;
+          border-radius: 8px;
+          padding: 10px 16px;
+          font-size: 15px;
+          cursor: pointer;
+        }
+        .btn-close:hover { background: #4b5563; }
+
+        /* Receipt paper */
+        .receipt {
+          background: #fff;
+          width: 300px;
+          padding: 14px 16px 18px;
+          box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+          font-family: 'Courier New', Courier, monospace;
+          font-size: 12px;
+          color: #000;
+        }
+
+        .center { text-align: center; }
+        .store-name { font-size: 16px; font-weight: bold; letter-spacing: 1px; }
+        .divider { border: none; border-top: 1px dashed #000; margin: 6px 0; }
+
+        table { width: 100%; border-collapse: collapse; }
+        th {
+          font-weight: bold;
+          border-bottom: 1px solid #000;
+          padding: 3px 0;
+          font-size: 11px;
+          text-transform: uppercase;
+        }
+        .totals td { padding: 2px 0; }
+        .total-row td {
+          font-weight: bold;
+          font-size: 14px;
+          border-top: 1px solid #000;
+          padding-top: 5px;
+          padding-bottom: 3px;
+        }
+        .footer { text-align: center; font-size: 11px; margin-top: 8px; }
+
+        /* When printing: hide toolbar, remove background, full width */
+        @media print {
+          body { background: none; padding: 0; }
+          .toolbar { display: none; }
+          .receipt { box-shadow: none; width: 72mm; padding: 0; }
+        }
+      </style>
+    </head><body>
+
+      <div class="toolbar">
+        <button class="btn-print" onclick="window.print()">🖨️ &nbsp;Print Receipt</button>
+        <button class="btn-close" onclick="window.close()">✕ Close</button>
+      </div>
+
+      <div class="receipt">
+        <div class="center">
+          <div class="store-name">${storeName}</div>
+          <div style="font-size:11px;margin-top:3px">${dateStr} &nbsp; ${timeStr}</div>
+          <div style="font-size:11px">Order #: ${receiptData.order_number || 'N/A'}</div>
+        </div>
+        <hr class="divider">
+        <table>
+          <thead><tr>
+            <th style="text-align:left">Item</th>
+            <th style="text-align:center">Qty</th>
+            <th style="text-align:right">Amt</th>
+          </tr></thead>
+          <tbody>${itemRows}</tbody>
+        </table>
+        <hr class="divider">
+        <table class="totals">
+          <tr><td>Subtotal</td><td style="text-align:right">${fmt(receiptData.subtotal)}</td></tr>
+          ${receiptData.discount > 0 ? `<tr><td>Discount</td><td style="text-align:right">-${fmt(receiptData.discount)}</td></tr>` : ''}
+          <tr><td>VAT (12%)</td><td style="text-align:right">${fmt(receiptData.tax)}</td></tr>
+          <tr class="total-row"><td>TOTAL</td><td style="text-align:right">${fmt(receiptData.total)}</td></tr>
+          <tr style="padding-top:4px"><td>${receiptData.payment_method || 'Cash'}</td><td style="text-align:right">${fmt(receiptData.amount_tendered)}</td></tr>
+          ${receiptData.change_due > 0 ? `<tr><td>Change</td><td style="text-align:right">${fmt(receiptData.change_due)}</td></tr>` : ''}
+        </table>
+        <hr class="divider">
+        <div class="footer">${footer}<br><br>*** Customer Copy ***</div>
+      </div>
+
+    </body></html>`
+
+    // Write to a real temp file so Chromium can load + preview it properly
+    const tmpFile = path.join(os.tmpdir(), `receipt_${Date.now()}.html`)
+    fs.writeFileSync(tmpFile, html, 'utf-8')
+
+    const receiptWin = new BW({
+      width: 480,
+      height: 750,
+      show: false,
+      title: 'Receipt Preview',
+      webPreferences: { nodeIntegration: false, contextIsolation: true },
+    })
+
+    receiptWin.loadFile(tmpFile)
+    receiptWin.webContents.once('did-finish-load', () => {
+      receiptWin.show()
+      try { fs.unlinkSync(tmpFile) } catch (_) {}
+    })
+    return true
   })
 }
 

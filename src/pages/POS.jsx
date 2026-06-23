@@ -1,10 +1,8 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import { useCartStore, useAppStore } from '../store'
 import { api, formatCurrency } from '../utils'
 import PaymentModal from '../components/PaymentModal'
 import styles from './POS.module.css'
-
-const EMOJI_OPTIONS = ['📦','🍔','🍕','🍗','🍚','🥤','💧','☕','🧃','🥔','🍫','🐻','🔌','💡','🎮','👕','👟','💊','🧴','🧹']
 
 export default function POS() {
   const { products, categories, settings, showNotification } = useAppStore()
@@ -15,7 +13,57 @@ export default function POS() {
   const [showPayment, setShowPayment] = useState(false)
   const [localProducts, setLocalProducts] = useState(products)
 
+  // Barcode scanner state
+  const barcodeBufferRef = useRef('')
+  const barcodeTimerRef = useRef(null)
+  const [lastScanned, setLastScanned] = useState(null)
+
   useEffect(() => { setLocalProducts(products) }, [products])
+
+  // Barcode scanner: listens for rapid keyboard input (hardware scanners emit chars fast)
+  const handleBarcodeKeyDown = useCallback(async (e) => {
+    // Only intercept when not focused on an input
+    const tag = document.activeElement?.tagName
+    if (tag === 'INPUT' || tag === 'TEXTAREA') return
+
+    if (e.key === 'Enter') {
+      const code = barcodeBufferRef.current.trim()
+      barcodeBufferRef.current = ''
+      if (code.length < 3) return
+
+      try {
+        const product = await api.products.getByBarcode(code)
+        if (product) {
+          if (product.stock === 0) {
+            showNotification(`${product.name} is out of stock`, 'warning')
+          } else {
+            addItem(product)
+            setLastScanned(product.name)
+            setTimeout(() => setLastScanned(null), 2000)
+          }
+        } else {
+          showNotification(`Barcode not found: ${code}`, 'error')
+        }
+      } catch {
+        showNotification('Barcode lookup failed', 'error')
+      }
+    } else if (e.key.length === 1) {
+      // Clear buffer if gap > 100ms (human typing) vs scanner burst
+      if (barcodeTimerRef.current) clearTimeout(barcodeTimerRef.current)
+      barcodeBufferRef.current += e.key
+      barcodeTimerRef.current = setTimeout(() => {
+        barcodeBufferRef.current = ''
+      }, 100)
+    }
+  }, [addItem, showNotification])
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleBarcodeKeyDown)
+    return () => {
+      window.removeEventListener('keydown', handleBarcodeKeyDown)
+      if (barcodeTimerRef.current) clearTimeout(barcodeTimerRef.current)
+    }
+  }, [handleBarcodeKeyDown])
 
   const taxRate = parseFloat(settings?.tax_rate || 12)
   const symbol = settings?.currency_symbol || '₱'
@@ -43,15 +91,23 @@ export default function POS() {
         note,
         ...paymentData,
       }
-      await api.orders.create(orderData)
+      const result = await api.orders.create(orderData)
       
+      // Print receipt
+      if (paymentData.printReceipt !== false) {
+        await api.receipt.print({
+          ...orderData,
+          order_number: result?.order_number || 'N/A',
+        })
+      }
+
       // Refresh local product stock
       const updated = await api.products.getAll()
       setLocalProducts(updated)
       
       clearCart()
       setShowPayment(false)
-      showNotification('Order completed successfully!', 'success')
+      showNotification('Order completed! Receipt printing…', 'success')
     } catch (err) {
       showNotification('Failed to process order', 'error')
     }
@@ -72,6 +128,16 @@ export default function POS() {
             className={styles.searchInput}
           />
           <span className={styles.searchIcon}>🔍</span>
+        </div>
+
+        {lastScanned && (
+          <div className={styles.barcodeToast}>
+            <span>📷</span> Added: <strong>{lastScanned}</strong>
+          </div>
+        )}
+
+        <div className={styles.barcodeHint}>
+          <span>📷 Barcode scanner ready</span>
         </div>
 
         <div className={styles.categories}>
